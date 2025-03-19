@@ -1,0 +1,35 @@
+# Virtual environment
+venv/
+env/
+.virtualenvs/
+
+# Python bytecode and cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Django-specific ignores
+db.sqlite3  # Ignore SQLite database
+*.log       # Ignore log files
+.env        # Ignore environment variables
+
+# Static and media files (if generated dynamically)
+staticfiles/
+media/
+
+# Django migration cache
+**/migrations/*.pyc
+**/migrations/__pycache__/
+
+# Node.js dependencies (for Tailwind CSS)
+node_modules/
+
+# IDE/editor files
+.vscode/
+.idea/
+*.swp
+
+# Compiled or temporary files
+*.out
+*.pid
