@@ -10,7 +10,6 @@ __pycache__/
 *.pyd
 
 # Django-specific ignores
-db.sqlite3  # Ignore SQLite database
 *.log       # Ignore log files
 .env        # Ignore environment variables
 
