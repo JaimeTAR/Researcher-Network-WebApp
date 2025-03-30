@@ -42,7 +42,9 @@ router.register(r'usuario', UsuarioViewSet)
 urlpatterns = [
     # Main router URLs
     path('', include(router.urls)),
+]  
+
     # # Optional: Add some custom endpoints if needed
     # path('investigadores/<int:pk>/proyectos/', InvestigadoresViewSet.as_view({'get': 'list_proyectos'})),
     # path('articulos/<int:pk>/detalle/', ArticulosViewSet.as_view({'get': 'retrieve_detalle'})),
-]
+

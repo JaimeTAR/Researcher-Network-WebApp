@@ -16,7 +16,6 @@ from .serializers import (
     SniiSerializer, TipoEventosSerializer, TipoEstudiantesSerializer, 
     TipoHerramientasSerializer, UnidadesSerializer, UsuarioSerializer
 )
-
 class AreasViewSet(viewsets.ModelViewSet):
     queryset = Areas.objects.all()
     serializer_class = AreasSerializer

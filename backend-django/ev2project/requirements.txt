@@ -4,3 +4,4 @@ django-filter
 django-cors-headers
 pymysql
 dotenv
+djangorestframework_simplejwt

@@ -6,7 +6,6 @@ from .models import (
     Rolesevento, Snii, Tipodeeventos, Tipoestudiantes, Tipoherramientas, 
     Unidades, Usuario
 )
-
 class TipoEventosSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tipodeeventos
@@ -29,6 +28,7 @@ class UnidadesSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class AreasSerializer(serializers.ModelSerializer):
+    idunidad = UnidadesSerializer()
     class Meta:
         model = Areas
         fields = '__all__'
@@ -74,6 +74,7 @@ class EspecialidadSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class NivelEducacionSerializer(serializers.ModelSerializer):
+    idespecialidad = EspecialidadSerializer()
     class Meta:
         model = Niveleducacion
         fields = '__all__'
@@ -84,32 +85,43 @@ class NivelSniiSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class SniiSerializer(serializers.ModelSerializer):
+    idnivelsnii = NivelSniiSerializer()
     class Meta:
         model = Snii
         fields = '__all__'
 
 class InvestigadoresSerializer(serializers.ModelSerializer):
+    idarea = AreasSerializer()
+    idsnii = SniiSerializer()
+    idniveledu = NivelEducacionSerializer()
     class Meta:
         model = Investigadores
         fields = '__all__'
 
 class EstudiantesSerializer(serializers.ModelSerializer):
+    idtipoestudiante = TipoEstudiantesSerializer()
+    idcarreras = CarrerasSerializer()
+    idinvestigador = InvestigadoresSerializer()
     class Meta:
         model = Estudiantes
         fields = '__all__'
 
 class EventosSerializer(serializers.ModelSerializer):
+    idtipoevento = TipoEventosSerializer()
     class Meta:
         model = Eventos
         fields = '__all__'
 
 class HerramientasSerializer(serializers.ModelSerializer):
+    idtipoherramienta = TipoHerramientasSerializer()
     class Meta:
         model = Herramientas
         fields = '__all__'
 
 
 class JefesAreaSerializer(serializers.ModelSerializer):
+    idarea = AreasSerializer()
+    idinvestigador = InvestigadoresSerializer()
     class Meta:
         model = Jefesarea
         fields = '__all__'
@@ -122,6 +134,7 @@ class LineasSerializer(serializers.ModelSerializer):
 
 
 class ProyectosSerializer(serializers.ModelSerializer):
+    idlider = InvestigadoresSerializer()
     class Meta:
         model = Proyectos
         fields = '__all__'
@@ -133,6 +146,7 @@ class RolesEventoSerializer(serializers.ModelSerializer):
 
 
 class UsuarioSerializer(serializers.ModelSerializer):
+    idinvestigador = InvestigadoresSerializer()
     class Meta:
         model = Usuario
         fields = '__all__'
