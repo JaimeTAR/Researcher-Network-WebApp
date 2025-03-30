@@ -10,7 +10,7 @@ from django.db import models
 
 class Areas(models.Model):
     idarea = models.AutoField(db_column='IdArea', primary_key=True)  # Field name made lowercase.
-    idunidad = models.IntegerField(db_column='IdUnidad', blank=True, null=True)  # Field name made lowercase.
+    idunidad = models.ForeignKey('Unidades', models.DO_NOTHING, db_column='IdUnidad', blank=True, null=True)  # Field name made lowercase.
     nombre = models.CharField(db_column='Nombre', max_length=100, blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
@@ -35,6 +35,75 @@ class Articulos(models.Model):
         db_table = 'articulos'
 
 
+class AuthGroup(models.Model):
+    name = models.CharField(unique=True, max_length=150)
+
+    class Meta:
+        managed = False
+        db_table = 'auth_group'
+
+
+class AuthGroupPermissions(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    group = models.ForeignKey(AuthGroup, models.DO_NOTHING)
+    permission = models.ForeignKey('AuthPermission', models.DO_NOTHING)
+
+    class Meta:
+        managed = False
+        db_table = 'auth_group_permissions'
+        unique_together = (('group', 'permission'),)
+
+
+class AuthPermission(models.Model):
+    name = models.CharField(max_length=255)
+    content_type = models.ForeignKey('DjangoContentType', models.DO_NOTHING)
+    codename = models.CharField(max_length=100)
+
+    class Meta:
+        managed = False
+        db_table = 'auth_permission'
+        unique_together = (('content_type', 'codename'),)
+
+
+class AuthUser(models.Model):
+    password = models.CharField(max_length=128)
+    last_login = models.DateTimeField(blank=True, null=True)
+    is_superuser = models.IntegerField()
+    username = models.CharField(unique=True, max_length=150)
+    first_name = models.CharField(max_length=150)
+    last_name = models.CharField(max_length=150)
+    email = models.CharField(max_length=254)
+    is_staff = models.IntegerField()
+    is_active = models.IntegerField()
+    date_joined = models.DateTimeField()
+
+    class Meta:
+        managed = False
+        db_table = 'auth_user'
+
+
+class AuthUserGroups(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    user = models.ForeignKey(AuthUser, models.DO_NOTHING)
+    group = models.ForeignKey(AuthGroup, models.DO_NOTHING)
+
+    class Meta:
+        managed = False
+        db_table = 'auth_user_groups'
+        unique_together = (('user', 'group'),)
+
+
+class AuthUserUserPermissions(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    user = models.ForeignKey(AuthUser, models.DO_NOTHING)
+    permission = models.ForeignKey(AuthPermission, models.DO_NOTHING)
+
+    class Meta:
+        managed = False
+        db_table = 'auth_user_user_permissions'
+        unique_together = (('user', 'permission'),)
+
+
 class Carreras(models.Model):
     idcarreras = models.AutoField(db_column='IdCarreras', primary_key=True)  # Field name made lowercase.
     nombre = models.CharField(db_column='Nombre', max_length=100, blank=True, null=True)  # Field name made lowercase.
@@ -46,8 +115,8 @@ class Carreras(models.Model):
 
 
 class Detarticulos(models.Model):
-    idarticulo = models.IntegerField(db_column='IdArticulo', primary_key=True)  # Field name made lowercase. The composite primary key (IdArticulo, IdInvestigador) found, that is not supported. The first column is selected.
-    idinvestigador = models.IntegerField(db_column='IdInvestigador')  # Field name made lowercase.
+    idarticulo = models.OneToOneField(Articulos, models.DO_NOTHING, db_column='IdArticulo', primary_key=True)  # Field name made lowercase. The composite primary key (IdArticulo, IdInvestigador) found, that is not supported. The first column is selected.
+    idinvestigador = models.ForeignKey('Investigadores', models.DO_NOTHING, db_column='IdInvestigador')  # Field name made lowercase.
     ordenautor = models.IntegerField(db_column='OrdenAutor', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
@@ -57,8 +126,8 @@ class Detarticulos(models.Model):
 
 
 class Deteventos(models.Model):
-    idevento = models.IntegerField(db_column='IdEvento', primary_key=True)  # Field name made lowercase. The composite primary key (IdEvento, IdInvestigador) found, that is not supported. The first column is selected.
-    idinvestigador = models.IntegerField(db_column='IdInvestigador')  # Field name made lowercase.
+    idevento = models.OneToOneField('Eventos', models.DO_NOTHING, db_column='IdEvento', primary_key=True)  # Field name made lowercase. The composite primary key (IdEvento, IdInvestigador) found, that is not supported. The first column is selected.
+    idinvestigador = models.ForeignKey('Investigadores', models.DO_NOTHING, db_column='IdInvestigador')  # Field name made lowercase.
     idrolevento = models.IntegerField(db_column='IdRolEvento', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
@@ -68,8 +137,8 @@ class Deteventos(models.Model):
 
 
 class Detherramientas(models.Model):
-    idproyecto = models.IntegerField(db_column='IdProyecto', primary_key=True)  # Field name made lowercase. The composite primary key (IdProyecto, IdHerramienta) found, that is not supported. The first column is selected.
-    idherramienta = models.IntegerField(db_column='IdHerramienta')  # Field name made lowercase.
+    idproyecto = models.OneToOneField('Proyectos', models.DO_NOTHING, db_column='IdProyecto', primary_key=True)  # Field name made lowercase. The composite primary key (IdProyecto, IdHerramienta) found, that is not supported. The first column is selected.
+    idherramienta = models.ForeignKey('Herramientas', models.DO_NOTHING, db_column='IdHerramienta')  # Field name made lowercase.
 
     class Meta:
         managed = False
@@ -78,8 +147,8 @@ class Detherramientas(models.Model):
 
 
 class Detlineas(models.Model):
-    idlinea = models.IntegerField(db_column='IdLinea', primary_key=True)  # Field name made lowercase. The composite primary key (IdLinea, IdInvestigador) found, that is not supported. The first column is selected.
-    idinvestigador = models.IntegerField(db_column='IdInvestigador')  # Field name made lowercase.
+    idlinea = models.OneToOneField('Lineas', models.DO_NOTHING, db_column='IdLinea', primary_key=True)  # Field name made lowercase. The composite primary key (IdLinea, IdInvestigador) found, that is not supported. The first column is selected.
+    idinvestigador = models.ForeignKey('Investigadores', models.DO_NOTHING, db_column='IdInvestigador')  # Field name made lowercase.
 
     class Meta:
         managed = False
@@ -88,14 +157,59 @@ class Detlineas(models.Model):
 
 
 class Detproyectos(models.Model):
-    idproyecto = models.IntegerField(db_column='IdProyecto', primary_key=True)  # Field name made lowercase. The composite primary key (IdProyecto, IdInvestigador) found, that is not supported. The first column is selected.
-    idinvestigador = models.IntegerField(db_column='IdInvestigador')  # Field name made lowercase.
+    idproyecto = models.OneToOneField('Proyectos', models.DO_NOTHING, db_column='IdProyecto', primary_key=True)  # Field name made lowercase. The composite primary key (IdProyecto, IdInvestigador) found, that is not supported. The first column is selected.
+    idinvestigador = models.ForeignKey('Investigadores', models.DO_NOTHING, db_column='IdInvestigador')  # Field name made lowercase.
     ordenimportancia = models.IntegerField(db_column='OrdenImportancia', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
         managed = False
         db_table = 'detproyectos'
         unique_together = (('idproyecto', 'idinvestigador'),)
+
+
+class DjangoAdminLog(models.Model):
+    action_time = models.DateTimeField()
+    object_id = models.TextField(blank=True, null=True)
+    object_repr = models.CharField(max_length=200)
+    action_flag = models.PositiveSmallIntegerField()
+    change_message = models.TextField()
+    content_type = models.ForeignKey('DjangoContentType', models.DO_NOTHING, blank=True, null=True)
+    user = models.ForeignKey(AuthUser, models.DO_NOTHING)
+
+    class Meta:
+        managed = False
+        db_table = 'django_admin_log'
+
+
+class DjangoContentType(models.Model):
+    app_label = models.CharField(max_length=100)
+    model = models.CharField(max_length=100)
+
+    class Meta:
+        managed = False
+        db_table = 'django_content_type'
+        unique_together = (('app_label', 'model'),)
+
+
+class DjangoMigrations(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    app = models.CharField(max_length=255)
+    name = models.CharField(max_length=255)
+    applied = models.DateTimeField()
+
+    class Meta:
+        managed = False
+        db_table = 'django_migrations'
+
+
+class DjangoSession(models.Model):
+    session_key = models.CharField(primary_key=True, max_length=40)
+    session_data = models.TextField()
+    expire_date = models.DateTimeField()
+
+    class Meta:
+        managed = False
+        db_table = 'django_session'
 
 
 class Especialidad(models.Model):
@@ -109,9 +223,9 @@ class Especialidad(models.Model):
 
 class Estudiantes(models.Model):
     idestudiante = models.AutoField(db_column='IdEstudiante', primary_key=True)  # Field name made lowercase.
-    idtipoestudiante = models.IntegerField(db_column='IdTipoEstudiante', blank=True, null=True)  # Field name made lowercase.
-    idcarreras = models.IntegerField(db_column='IdCarreras', blank=True, null=True)  # Field name made lowercase.
-    idinvestigador = models.IntegerField(db_column='IdInvestigador', blank=True, null=True)  # Field name made lowercase.
+    idtipoestudiante = models.ForeignKey('Tipoestudiantes', models.DO_NOTHING, db_column='IdTipoEstudiante', blank=True, null=True)  # Field name made lowercase.
+    idcarreras = models.ForeignKey(Carreras, models.DO_NOTHING, db_column='IdCarreras', blank=True, null=True)  # Field name made lowercase.
+    idinvestigador = models.ForeignKey('Investigadores', models.DO_NOTHING, db_column='IdInvestigador', blank=True, null=True)  # Field name made lowercase.
     nombre = models.CharField(db_column='Nombre', max_length=100, blank=True, null=True)  # Field name made lowercase.
     fechainicio = models.CharField(db_column='FechaInicio', max_length=100, blank=True, null=True)  # Field name made lowercase.
     fechatermino = models.CharField(db_column='FechaTermino', max_length=100, blank=True, null=True)  # Field name made lowercase.
@@ -124,7 +238,7 @@ class Estudiantes(models.Model):
 
 class Eventos(models.Model):
     idevento = models.AutoField(db_column='IdEvento', primary_key=True)  # Field name made lowercase.
-    idtipoevento = models.IntegerField(db_column='IdTipoEvento', blank=True, null=True)  # Field name made lowercase.
+    idtipoevento = models.ForeignKey('Tipodeeventos', models.DO_NOTHING, db_column='IdTipoEvento', blank=True, null=True)  # Field name made lowercase.
     nombreevento = models.CharField(db_column='NombreEvento', max_length=200, blank=True, null=True)  # Field name made lowercase.
     descripcion = models.TextField(db_column='Descripcion', blank=True, null=True)  # Field name made lowercase.
     fechainicio = models.CharField(db_column='FechaInicio', max_length=100, blank=True, null=True)  # Field name made lowercase.
@@ -140,7 +254,7 @@ class Eventos(models.Model):
 class Herramientas(models.Model):
     idherramientas = models.AutoField(db_column='IdHerramientas', primary_key=True)  # Field name made lowercase.
     nombre = models.CharField(db_column='Nombre', max_length=100, blank=True, null=True)  # Field name made lowercase.
-    idtipoherramienta = models.IntegerField(db_column='IdTipoHerramienta', blank=True, null=True)  # Field name made lowercase.
+    idtipoherramienta = models.ForeignKey('Tipoherramientas', models.DO_NOTHING, db_column='IdTipoHerramienta', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
         managed = False
@@ -149,9 +263,9 @@ class Herramientas(models.Model):
 
 class Investigadores(models.Model):
     idinvestigador = models.AutoField(db_column='IdInvestigador', primary_key=True)  # Field name made lowercase.
-    idarea = models.IntegerField(db_column='IdArea', blank=True, null=True)  # Field name made lowercase.
-    idniveledu = models.IntegerField(db_column='IdNivelEdu', blank=True, null=True)  # Field name made lowercase.
-    idsnii = models.IntegerField(db_column='IdSNII', blank=True, null=True)  # Field name made lowercase.
+    idarea = models.ForeignKey(Areas, models.DO_NOTHING, db_column='IdArea', blank=True, null=True)  # Field name made lowercase.
+    idniveledu = models.ForeignKey('Niveleducacion', models.DO_NOTHING, db_column='IdNivelEdu', blank=True, null=True)  # Field name made lowercase.
+    idsnii = models.ForeignKey('Snii', models.DO_NOTHING, db_column='IdSNII', blank=True, null=True)  # Field name made lowercase.
     nombre = models.CharField(db_column='Nombre', max_length=100, blank=True, null=True)  # Field name made lowercase.
     correo = models.CharField(db_column='Correo', max_length=100, blank=True, null=True)  # Field name made lowercase.
     celular = models.CharField(db_column='Celular', max_length=20, blank=True, null=True)  # Field name made lowercase.
@@ -165,8 +279,8 @@ class Investigadores(models.Model):
 
 class Jefesarea(models.Model):
     idjefearea = models.AutoField(db_column='IdJefeArea', primary_key=True)  # Field name made lowercase.
-    idarea = models.IntegerField(db_column='IdArea', blank=True, null=True)  # Field name made lowercase.
-    idinvestigador = models.IntegerField(db_column='IdInvestigador', blank=True, null=True)  # Field name made lowercase.
+    idarea = models.ForeignKey(Areas, models.DO_NOTHING, db_column='IdArea', blank=True, null=True)  # Field name made lowercase.
+    idinvestigador = models.ForeignKey(Investigadores, models.DO_NOTHING, db_column='IdInvestigador', blank=True, null=True)  # Field name made lowercase.
     fechainicio = models.CharField(db_column='FechaInicio', max_length=100, blank=True, null=True)  # Field name made lowercase.
     fechafin = models.CharField(db_column='FechaFin', max_length=100, blank=True, null=True)  # Field name made lowercase.
     activo = models.IntegerField(db_column='Activo', blank=True, null=True)  # Field name made lowercase.
@@ -187,7 +301,7 @@ class Lineas(models.Model):
 
 class Niveleducacion(models.Model):
     idniveledu = models.AutoField(db_column='IdNivelEdu', primary_key=True)  # Field name made lowercase.
-    idespecialidad = models.IntegerField(db_column='IdEspecialidad', blank=True, null=True)  # Field name made lowercase.
+    idespecialidad = models.ForeignKey(Especialidad, models.DO_NOTHING, db_column='IdEspecialidad', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
         managed = False
@@ -230,7 +344,7 @@ class Rolesevento(models.Model):
 
 class Snii(models.Model):
     idsnii = models.AutoField(db_column='IdSNII', primary_key=True)  # Field name made lowercase.
-    idnivelsnii = models.IntegerField(db_column='IdNivelSNII', blank=True, null=True)  # Field name made lowercase.
+    idnivelsnii = models.ForeignKey(Nivelsnii, models.DO_NOTHING, db_column='IdNivelSNII', blank=True, null=True)  # Field name made lowercase.
     fechaasignacion = models.CharField(db_column='FechaAsignacion', max_length=100, blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
@@ -276,7 +390,7 @@ class Unidades(models.Model):
 
 class Usuario(models.Model):
     idusuario = models.AutoField(db_column='IdUsuario', primary_key=True)  # Field name made lowercase.
-    idinvestigador = models.IntegerField(db_column='IdInvestigador', blank=True, null=True)  # Field name made lowercase.
+    idinvestigador = models.ForeignKey(Investigadores, models.DO_NOTHING, db_column='IdInvestigador', blank=True, null=True)  # Field name made lowercase.
     contrasena = models.CharField(db_column='Contrasena', max_length=255, blank=True, null=True)  # Field name made lowercase.
     fechacreacion = models.CharField(db_column='FechaCreacion', max_length=100, blank=True, null=True)  # Field name made lowercase.
     ultimoacceso = models.CharField(db_column='UltimoAcceso', max_length=100, blank=True, null=True)  # Field name made lowercase.
