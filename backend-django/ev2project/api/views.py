@@ -1,4 +1,3 @@
-from rest_framework import viewsets, filters
 from .models import (
     Areas, Articulos, Carreras, Detarticulos, Deteventos, Detherramientas, 
     Detlineas, Detproyectos, Especialidad, Estudiantes, Eventos, Herramientas, 
@@ -14,8 +13,83 @@ from .serializers import (
     JefesAreaSerializer, LineasSerializer, NivelEducacionSerializer, 
     NivelSniiSerializer, ProyectosSerializer, RolesEventoSerializer, 
     SniiSerializer, TipoEventosSerializer, TipoEstudiantesSerializer, 
-    TipoHerramientasSerializer, UnidadesSerializer, UsuarioSerializer
+    TipoHerramientasSerializer, UnidadesSerializer
 )
+
+from rest_framework.response import Response
+from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework import status, viewsets, filters
+from django.contrib.auth import authenticate
+from django.contrib.auth.models import User
+from rest_framework.decorators import api_view, permission_classes,authentication_classes
+from django.middleware.csrf import get_token
+from .authentication import CookieJWTAuthentication
+from rest_framework_simplejwt.tokens import RefreshToken
+
+@api_view(["POST"])
+@permission_classes([AllowAny])
+def login_view(request):
+    username = request.data.get("username")
+    password = request.data.get("password")
+
+    user = authenticate(username=username, password=password)
+    if user is None:
+        return Response({"error": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
+
+    # Generate tokens
+    from rest_framework_simplejwt.tokens import RefreshToken
+    refresh = RefreshToken.for_user(user)
+    
+    response = Response()
+    response.set_cookie("access_token", str(refresh.access_token), httponly=True, samesite="Lax", secure=True)
+    response.set_cookie("refresh_token", str(refresh), httponly=True, samesite="Lax", secure=True)
+    response.data = {"message": "Login successful", "csrfToken": get_token(request)}
+
+    return response
+
+@api_view(["POST"])
+@permission_classes([AllowAny])
+def signup_view(request):
+    username = request.data.get("username")
+    email = request.data.get("email")
+    password = request.data.get("password")
+    # id_investigador = request.data.get("id_investigador")
+
+    if not username or not email or not password:
+        return Response({"error": "Missing required fields"}, status=status.HTTP_400_BAD_REQUEST)
+
+    if User.objects.filter(username=username).exists():
+        return Response({"error": "Username already taken"}, status=status.HTTP_400_BAD_REQUEST)
+
+    if User.objects.filter(email=email).exists():
+        return Response({"error": "Email already registered"}, status=status.HTTP_400_BAD_REQUEST)
+
+    # Create user
+    user = User.objects.create_user(username=username, email=email, password=password)
+    
+    # If using a custom user model
+    if hasattr(user, "id_investigador"):
+        user.save()
+
+    # Generate JWT tokens
+    refresh = RefreshToken.for_user(user)
+
+    response = Response({"message": "User registered successfully", "csrfToken": get_token(request)})
+    response.set_cookie("access_token", str(refresh.access_token), httponly=True, samesite="Lax", secure=True)
+    response.set_cookie("refresh_token", str(refresh), httponly=True, samesite="Lax", secure=True)
+
+    return response
+
+
+@api_view(["POST"])
+def logout_view(request):
+    response = Response({"message": "Logged out"})
+    response.delete_cookie("access_token")
+    response.delete_cookie("refresh_token")
+    return response
+
+@authentication_classes([CookieJWTAuthentication])
+@permission_classes([IsAuthenticated])
 class AreasViewSet(viewsets.ModelViewSet):
     queryset = Areas.objects.all()
     serializer_class = AreasSerializer
@@ -162,12 +236,3 @@ class UnidadesViewSet(viewsets.ModelViewSet):
     serializer_class = UnidadesSerializer
     filter_backends = [filters.SearchFilter]
     search_fields = ['nombre']
-
-class UsuarioViewSet(viewsets.ModelViewSet):
-    queryset = Usuario.objects.all()
-    serializer_class = UsuarioSerializer
-    filter_backends = [filters.SearchFilter]
-    filterset_fields = ['idinvestigador', 'activo']
-    search_fields = ['fechacreacion', 'ultimoacceso']
-    def filter_queryset(self, queryset):
-        return super().filter_queryset(queryset)

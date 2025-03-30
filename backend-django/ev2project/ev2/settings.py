@@ -39,6 +39,17 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:5173",
 ]
 
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
+    "ROTATE_REFRESH_TOKENS": True,
+    "BLACKLIST_AFTER_ROTATION": True,
+    "AUTH_HEADER_TYPES": ("Bearer",),
+    "AUTH_COOKIE": "access_token",  # Set cookie name
+    "AUTH_COOKIE_HTTP_ONLY": True,  # HttpOnly flag
+    "AUTH_COOKIE_SAMESITE": "Lax",  # Adjust if needed
+    "AUTH_COOKIE_SECURE": True,  # Set to True in production (HTTPS required)
+}
 # CORS_ALLOW_ALL_ORIGINS = True # DISABLE IN PRODUCTION!!!
 
 # Application definition

@@ -8,7 +8,8 @@ from .views import (
     JefesAreaViewSet, LineasViewSet, NivelEducacionViewSet, 
     NivelSniiViewSet, ProyectosViewSet, RolesEventoViewSet, 
     SniiViewSet, TipoEventosViewSet, TipoEstudiantesViewSet, 
-    TipoHerramientasViewSet, UnidadesViewSet, UsuarioViewSet
+    TipoHerramientasViewSet, UnidadesViewSet,
+    login_view, logout_view, signup_view
 )
 
 # Create a router and register all viewsets
@@ -37,11 +38,13 @@ router.register(r'tipodeeventos', TipoEventosViewSet)
 router.register(r'tipoestudiantes', TipoEstudiantesViewSet)
 router.register(r'tipoherramientas', TipoHerramientasViewSet)
 router.register(r'unidades', UnidadesViewSet)
-router.register(r'usuario', UsuarioViewSet)
 
 urlpatterns = [
     # Main router URLs
     path('', include(router.urls)),
+    path('auth/login/', login_view, name="login"),
+    path('auth/logout/', logout_view, name="logout"),
+    path('auth/signup/', signup_view, name="signup")
 ]  
 
     # # Optional: Add some custom endpoints if needed
