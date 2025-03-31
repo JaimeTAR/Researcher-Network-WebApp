@@ -3,7 +3,7 @@ from .models import (
     Detlineas, Detproyectos, Especialidad, Estudiantes, Eventos, Herramientas, 
     Investigadores, Jefesarea, Lineas, Niveleducacion, Nivelsnii, Proyectos, 
     Rolesevento, Snii, Tipodeeventos, Tipoestudiantes, Tipoherramientas, 
-    Unidades, Usuario
+    Unidades
 )
 from .serializers import (
     AreasSerializer, ArticulosSerializer, CarrerasSerializer, DetarticulosSerializer, 
@@ -21,10 +21,21 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework import status, viewsets, filters
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
-from rest_framework.decorators import api_view, permission_classes,authentication_classes
+from rest_framework.decorators import api_view, permission_classes,authentication_classes, action
 from django.middleware.csrf import get_token
 from .authentication import CookieJWTAuthentication
 from rest_framework_simplejwt.tokens import RefreshToken
+
+@api_view(["GET"])
+@authentication_classes([CookieJWTAuthentication])
+@permission_classes([IsAuthenticated])
+def check_authentication(request):
+    return Response({
+        "authenticated": True,
+        "username": request.user.username,
+        "email": request.user.email,
+        "role": "admin" if request.user.is_staff == 1 else "user"
+    })
 
 @api_view(["POST"])
 @permission_classes([AllowAny])
@@ -34,10 +45,8 @@ def login_view(request):
 
     user = authenticate(username=username, password=password)
     if user is None:
-        return Response({"error": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
+        return Response({"message":"Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
 
-    # Generate tokens
-    from rest_framework_simplejwt.tokens import RefreshToken
     refresh = RefreshToken.for_user(user)
     
     response = Response()
@@ -53,23 +62,18 @@ def signup_view(request):
     username = request.data.get("username")
     email = request.data.get("email")
     password = request.data.get("password")
-    # id_investigador = request.data.get("id_investigador")
 
     if not username or not email or not password:
-        return Response({"error": "Missing required fields"}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"message": "Missing required fields"}, status=status.HTTP_400_BAD_REQUEST)
 
     if User.objects.filter(username=username).exists():
-        return Response({"error": "Username already taken"}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"message": "Username already taken"}, status=status.HTTP_400_BAD_REQUEST)
 
     if User.objects.filter(email=email).exists():
-        return Response({"error": "Email already registered"}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"message": "Email already registered"}, status=status.HTTP_400_BAD_REQUEST)
 
     # Create user
     user = User.objects.create_user(username=username, email=email, password=password)
-    
-    # If using a custom user model
-    if hasattr(user, "id_investigador"):
-        user.save()
 
     # Generate JWT tokens
     refresh = RefreshToken.for_user(user)
@@ -88,14 +92,13 @@ def logout_view(request):
     response.delete_cookie("refresh_token")
     return response
 
-@authentication_classes([CookieJWTAuthentication])
-@permission_classes([IsAuthenticated])
+
 class AreasViewSet(viewsets.ModelViewSet):
     queryset = Areas.objects.all()
     serializer_class = AreasSerializer
     filter_backends = [filters.SearchFilter]
     search_fields = ['nombre']
-
+    
 class ArticulosViewSet(viewsets.ModelViewSet):
     queryset = Articulos.objects.all()
     serializer_class = ArticulosSerializer

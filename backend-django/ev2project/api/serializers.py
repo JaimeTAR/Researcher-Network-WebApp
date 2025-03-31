@@ -4,7 +4,7 @@ from .models import (
     Detlineas, Detproyectos, Especialidad, Estudiantes, Eventos, Herramientas, 
     Investigadores, Jefesarea, Lineas, Niveleducacion, Nivelsnii, Proyectos, 
     Rolesevento, Snii, Tipodeeventos, Tipoestudiantes, Tipoherramientas, 
-    Unidades, Usuario
+    Unidades
 )
 
 class TipoEventosSerializer(serializers.ModelSerializer):
@@ -28,7 +28,8 @@ class UnidadesSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class AreasSerializer(serializers.ModelSerializer):
-    # For read operations (displaying the name)
+    idunidad_detail = UnidadesSerializer(source='idunidad', read_only=True)
+    
     class Meta:
         model = Areas
         fields = '__all__'
@@ -155,12 +156,4 @@ class ProyectosSerializer(serializers.ModelSerializer):
 class RolesEventoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Rolesevento
-        fields = '__all__'
-
-class UsuarioSerializer(serializers.ModelSerializer):
-    # For read operations
-    idinvestigador_detail = InvestigadoresSerializer(source='idinvestigador', read_only=True)
-    
-    class Meta:
-        model = Usuario
         fields = '__all__'
