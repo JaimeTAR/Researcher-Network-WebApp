@@ -145,3 +145,185 @@ The system comes with two predefined users:
 ![Login Page](https://github.com/user-attachments/assets/7ed0bf3c-c469-4226-86f7-b6807a1a8590)
 
 Our WebApp is secured with the use of JWTs to validate if the user is authenticated from the frontend before making any calls to the backend.
+
+# Verbos HTTP
+
+## GET - Obtener recursos
+
+### Descripción
+
+El método GET solicita una representación del recurso especificado. Las peticiones GET solo deben recuperar datos y no deben tener ningún otro efecto.
+
+### Ejemplo en Postman
+
+**Configuración básica:**
+
+1. Selecciona `GET` en el dropdown de métodos
+2. Introduce la URL: `https://api.ejemplo.com/usuarios`
+3. Haz clic en "Send"
+
+**Headers comunes:**
+
+```
+Accept: application/json
+Authorization: Bearer {token}
+```
+
+**Ejemplo de respuesta (200 OK):**
+
+```json
+{
+  "usuarios": [
+    {
+      "id": 1,
+      "nombre": "Ana García",
+      "email": "ana.garcia@ejemplo.com"
+    },
+    {
+      "id": 2,
+      "nombre": "Carlos Rodríguez",
+      "email": "carlos.rodriguez@ejemplo.com"
+    }
+  ],
+  "total": 2
+}
+```
+
+### Caso de uso
+
+Obtener una lista de usuarios, detalles de un producto, o cualquier consulta donde solo necesites leer información.
+
+## POST - Crear recursos
+
+### Descripción
+
+El método POST envía datos al servidor para crear un nuevo recurso. Es el método más común para enviar datos a un servidor.
+
+### Ejemplo en Postman
+
+**Configuración básica:**
+
+1. Selecciona `POST` en el dropdown de métodos
+2. Introduce la URL: `https://api.ejemplo.com/usuarios`
+3. Ve a la pestaña "Body"
+4. Selecciona "raw" y "JSON"
+5. Introduce el contenido:
+
+```json
+{
+  "nombre": "María López",
+  "email": "maria.lopez@ejemplo.com",
+  "password": "contraseña123"
+}
+```
+
+6. Haz clic en "Send"
+
+**Headers comunes:**
+
+```
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {token}
+```
+
+**Ejemplo de respuesta (201 Created):**
+
+```json
+{
+  "id": 3,
+  "nombre": "María López",
+  "email": "maria.lopez@ejemplo.com",
+  "createdAt": "2025-04-05T14:30:00Z"
+}
+```
+
+### Caso de uso
+
+Crear un nuevo usuario, publicar un comentario, subir un archivo o enviar datos de un formulario.
+
+## PUT - Actualizar recursos
+
+### Descripción
+
+El método PUT reemplaza todas las representaciones actuales del recurso de destino con los datos enviados. Si el recurso no existe, puede crear uno nuevo.
+
+### Ejemplo en Postman
+
+**Configuración básica:**
+
+1. Selecciona `PUT` en el dropdown de métodos
+2. Introduce la URL: `https://api.ejemplo.com/usuarios/3`
+3. Ve a la pestaña "Body"
+4. Selecciona "raw" y "JSON"
+5. Introduce el contenido:
+
+```json
+{
+  "nombre": "María López Sánchez",
+  "email": "maria.lopez.sanchez@ejemplo.com",
+  "password": "nuevacontraseña456"
+}
+```
+
+6. Haz clic en "Send"
+
+**Headers comunes:**
+
+```
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {token}
+```
+
+**Ejemplo de respuesta (200 OK):**
+
+```json
+{
+  "id": 3,
+  "nombre": "María López Sánchez",
+  "email": "maria.lopez.sanchez@ejemplo.com",
+  "updatedAt": "2025-04-05T15:45:00Z"
+}
+```
+
+### Caso de uso
+
+Actualizar un perfil de usuario completo, reemplazar un archivo o actualizar un recurso entero.
+
+## DELETE - Eliminar recursos
+
+### Descripción
+
+El método DELETE elimina el recurso especificado.
+
+### Ejemplo en Postman
+
+**Configuración básica:**
+
+1. Selecciona `DELETE` en el dropdown de métodos
+2. Introduce la URL: `https://api.ejemplo.com/usuarios/2`
+3. Haz clic en "Send"
+
+**Headers comunes:**
+
+```
+Authorization: Bearer {token}
+```
+
+**Ejemplo de respuesta (204 No Content):**
+_No body returned_
+
+**Ejemplo de respuesta alternativa (200 OK):**
+
+```json
+{
+  "message": "Usuario eliminado correctamente",
+  "deleted": true,
+  "id": 2
+}
+```
+
+### Caso de uso
+
+Eliminar un usuario, borrar un archivo o quitar un recurso del sistema.
