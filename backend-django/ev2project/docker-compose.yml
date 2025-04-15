@@ -1,0 +1,54 @@
+version: "1"
+
+services:
+  app1:
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/code
+    ports:
+      - "8001:8000"
+    environment:
+      - DEBUG=1
+      - DJANGO_SECRET=akshdkjahskjdhj1h289u3189239
+      - DB_NAME=investigadores
+      - DB_USER=root
+      - DB_PASSWORD=
+      - DB_HOST=host.docker.internal
+      - DB_PORT=3306
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+  app2:
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/code
+    ports:
+      - "8002:8000"
+    environment:
+      - DEBUG=1
+      - DJANGO_SECRET=akshdkjahskjdhj1h289u3189239
+      - DB_NAME=investigadores
+      - DB_USER=root
+      - DB_PASSWORD=
+      - DB_HOST=host.docker.internal
+      - DB_PORT=3306
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+  app3:
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/code
+    ports:
+      - "8003:8000"
+    environment:
+      - DEBUG=1
+      - DJANGO_SECRET=akshdkjahskjdhj1h289u3189239
+      - DB_NAME=investigadores
+      - DB_USER=root
+      - DB_PASSWORD=
+      - DB_HOST=host.docker.internal
+      - DB_PORT=3306
+    extra_hosts:
+      - "host.docker.internal:host-gateway"

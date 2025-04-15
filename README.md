@@ -2,12 +2,56 @@
 
 ![Django](https://img.shields.io/badge/Django-092E20?style=for-the-badge&logo=django&logoColor=white) ![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white) ![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white)
 ![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB) ![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white) ![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white) ![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white) ![TailwindCSS](https://img.shields.io/badge/tailwindcss-%2338B2AC.svg?style=for-the-badge&logo=tailwind-css&logoColor=white)
-![Postman](https://img.shields.io/badge/Postman-FF6C37?style=for-the-badge&logo=postman&logoColor=white)
+![Postman](https://img.shields.io/badge/Postman-FF6C37?style=for-the-badge&logo=postman&logoColor=white) ![Nginx](https://img.shields.io/badge/nginx-%23009639.svg?style=for-the-badge&logo=nginx&logoColor=white)
 
 ### Collaborators
 
 1. ###### Jaime Alfaro
 2. ###### Arturo Gutiérrez
+
+## Nginx implementation
+
+Used Nginx to serve as a reverse proxy and balance loader, having 3 different instances of the server, being managed by our central Nginx server.
+
+The files for the dockerization of the backend are located inside the `backend-django/ev2project` folder.
+
+File `Dockerfile` is used to build the image for the backend.
+
+File `docker-compose.yml` is used to build the three different instances of the server.
+
+Then we need an Nginx server with the following configuration:
+
+```yml
+# nginx.conf
+
+worker_processes 1;
+
+events {
+worker_connections 1024;
+}
+
+http {
+include mime.types;
+
+upstream django_cluster {
+least_conn;
+server 127.0.0.1:8001;
+server 127.0.0.1:8002;
+server 127.0.0.1:8003;
+}
+
+server {
+listen 8080;
+server_name localhost;
+
+location / {
+proxy_pass http://django_cluster;
+proxy_set_header Host $host;
+proxy_set_header X-Real-IP $remote_addr;
+}
+}
+}
+```
 
 ## Technologies Used
 
