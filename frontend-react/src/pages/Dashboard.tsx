@@ -3,7 +3,7 @@ import Header from "../components/Header";
 import Sidebar from "../components/Sidebar";
 import Home from "../components/Dashboard/Home";
 import Footer from "../components/Footer";
-import EmpleadosView from "../components/Dashboard/EmpleadosView";
+import InvestigadoresView from "../components/Dashboard/InvestigadoresView";
 import EstudiantesView from "../components/Dashboard/EstudiantesView";
 import ProyectosView from "../components/Dashboard/ProyectosView";
 import AreasView from "../components/Dashboard/AreasView";
@@ -27,8 +27,8 @@ const Dashboard = () => {
     switch (activeTab) {
       case "inicio":
         return <Home />;
-      case "empleados":
-        return <EmpleadosView />;
+      case "investigadores":
+        return <InvestigadoresView />;
       case "estudiantes":
         return <EstudiantesView />;
       case "proyectos":

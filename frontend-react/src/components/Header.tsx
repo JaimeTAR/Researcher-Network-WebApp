@@ -1,23 +1,30 @@
 import { FaRegUser } from "react-icons/fa";
 import { FiMenu } from "react-icons/fi";
 import { useAuth } from "../hooks/useAuth";
+import { MdArrowBack } from "react-icons/md";
+import { useNavigate } from "react-router";
 
 interface HeaderProps {
-  toggleSidebar: () => void;
+  toggleSidebar?: () => void;
 }
 
 const Header = ({ toggleSidebar }: HeaderProps) => {
   const { user } = useAuth();
+  const navigate = useNavigate();
+
+  const goBack = () => {
+    navigate(-1);
+  };
 
   return (
     <header className="flex justify-center border-b border-gray-700 bg-gray-800 px-6 py-4">
       <div className="container flex items-center justify-between">
         <div className="flex items-center">
           <button
-            onClick={toggleSidebar}
+            onClick={toggleSidebar ? toggleSidebar : goBack}
             className="mr-4 cursor-pointer rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white"
           >
-            <FiMenu size={20} />
+            {toggleSidebar ? <FiMenu size={20} /> : <MdArrowBack size={20} />}
           </button>
           <h1 className="text-xl font-bold text-white">
             <span className="bg-gradient-to-r from-orange-400 to-orange-600 bg-clip-text text-transparent">

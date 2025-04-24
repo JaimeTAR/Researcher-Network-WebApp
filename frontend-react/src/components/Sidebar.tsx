@@ -17,7 +17,11 @@ import { RiArticleLine } from "react-icons/ri";
 
 const userMenuItems: MenuItem[] = [
   { icon: <BiHome size={20} />, label: "Inicio", name: "inicio" },
-  { icon: <BiUser size={20} />, label: "Empleados", name: "empleados" },
+  {
+    icon: <BiUser size={20} />,
+    label: "Investigadores",
+    name: "investigadores",
+  },
   {
     icon: <PiStudentBold size={20} />,
     label: "Estudiantes",

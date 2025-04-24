@@ -7,6 +7,7 @@ import { AuthProvider } from "./context/AuthContext.tsx";
 import Dashboard from "./pages/Dashboard.tsx";
 import ProtectedRoute from "./ProtectedRoute.tsx";
 import { CategoriesProvider } from "./context/CategoriesContext.tsx";
+import Investigador from "./pages/Investigador.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -17,6 +18,10 @@ createRoot(document.getElementById("root")!).render(
             <Route path="/login" element={<LoginSignup />} />
             <Route element={<ProtectedRoute />}>
               <Route path="/" element={<Dashboard />} />
+              <Route
+                path="/investigador/:investigadorId"
+                element={<Investigador />}
+              />
             </Route>
           </Routes>
         </CategoriesProvider>

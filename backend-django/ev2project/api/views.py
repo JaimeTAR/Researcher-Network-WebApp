@@ -35,7 +35,7 @@ def restore_database_view(request):
     dump_file = request.FILES.get('dump_file')
 
     if not dump_file:
-        return Response({"message": "No dump file uploaded"}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"message": "No dump file uploaded", "ok": False}, status=status.HTTP_400_BAD_REQUEST)
 
     # Guardar temporalmente el dump
     temp_path = os.path.join(settings.BASE_DIR, "temp_dump.sql")
@@ -58,10 +58,10 @@ def restore_database_view(request):
         restore_cmd = f'mysql -u {db_user} -p{db_pass} -h {db_host} {db_name} < {temp_path}'
         subprocess.run(restore_cmd, shell=True, check=True)
 
-        return Response({"message": "Database restored successfully"}, status=status.HTTP_200_OK)
+        return Response({"message": "Database restored successfully", "ok": True}, status=status.HTTP_200_OK)
 
     except subprocess.CalledProcessError as e:
-        return Response({"message": f"Restore failed: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response({"message": f"Restore failed: {str(e)}", "ok": False}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     finally:
         if os.path.exists(temp_path):

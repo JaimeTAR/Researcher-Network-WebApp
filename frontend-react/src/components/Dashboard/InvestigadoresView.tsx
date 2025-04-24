@@ -15,6 +15,7 @@ import { Investigadores } from "../../utils/interfaces";
 import { GiBanknote } from "react-icons/gi";
 import { useCategories } from "../../hooks/useCategories";
 import { request } from "../../services/api";
+import { useNavigate } from "react-router";
 
 const fetchInvestigadores = async (): Promise<Investigadores[]> => {
   return request("get", "/investigadores/");
@@ -32,7 +33,8 @@ const deleteInvestigador = async (id: number) => {
   return request("delete", `/investigadores/${id}/`);
 };
 
-const EmpleadosView = () => {
+const InvestigadoresView = () => {
+  const navigate = useNavigate();
   const {
     nivelesEdu: niveles,
     areas,
@@ -342,7 +344,10 @@ const EmpleadosView = () => {
             filteredInvestigadores.map((investigador) => (
               <div
                 key={investigador.idinvestigador}
-                className="overflow-hidden rounded-lg border border-gray-700 bg-gray-800 transition-colors hover:border-orange-500"
+                onClick={() => {
+                  navigate("/investigador/" + investigador.idinvestigador);
+                }}
+                className="cursor-pointer overflow-hidden rounded-lg border border-gray-700 bg-gray-800 transition-colors hover:border-orange-500"
               >
                 <div className="p-5">
                   <div className="flex items-start justify-between">
@@ -458,4 +463,4 @@ const EmpleadosView = () => {
   );
 };
 
-export default EmpleadosView;
+export default InvestigadoresView;
