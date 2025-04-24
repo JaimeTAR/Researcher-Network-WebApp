@@ -9,7 +9,8 @@ from .views import (
     NivelSniiViewSet, ProyectosViewSet, RolesEventoViewSet, 
     SniiViewSet, TipoEventosViewSet, TipoEstudiantesViewSet, 
     TipoHerramientasViewSet, UnidadesViewSet,
-    login_view, logout_view, signup_view, check_authentication
+    login_view, logout_view, signup_view, check_authentication,
+    restore_database_view
 )
 
 # Create a router and register all viewsets
@@ -45,7 +46,8 @@ urlpatterns = [
     path('auth/login/', login_view, name="login"),
     path('auth/logout/', logout_view, name="logout"),
     path('auth/signup/', signup_view, name="signup"),
-    path('auth/check/', check_authentication, name="auth_check")
+    path('auth/check/', check_authentication, name="auth_check"),
+    path('dump', restore_database_view, name="db_dump")
 ]  
 
     # # Optional: Add some custom endpoints if needed

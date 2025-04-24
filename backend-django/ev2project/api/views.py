@@ -25,6 +25,47 @@ from rest_framework.decorators import api_view, permission_classes,authenticatio
 from django.middleware.csrf import get_token
 from .authentication import CookieJWTAuthentication
 from rest_framework_simplejwt.tokens import RefreshToken
+from django.conf import settings
+import os
+import subprocess
+
+@api_view(["POST"])
+@permission_classes([AllowAny])  # ⚠️ Cambia esto a IsAdminUser o permisos seguros en producción
+def restore_database_view(request):
+    dump_file = request.FILES.get('dump_file')
+
+    if not dump_file:
+        return Response({"message": "No dump file uploaded"}, status=status.HTTP_400_BAD_REQUEST)
+
+    # Guardar temporalmente el dump
+    temp_path = os.path.join(settings.BASE_DIR, "temp_dump.sql")
+    with open(temp_path, "wb+") as dest:
+        for chunk in dump_file.chunks():
+            dest.write(chunk)
+
+    # Datos de la base de datos desde settings.py
+    db_name = settings.DATABASES["default"]["NAME"]
+    db_user = settings.DATABASES["default"]["USER"]
+    db_pass = settings.DATABASES["default"]["PASSWORD"]
+    db_host = settings.DATABASES["default"].get("HOST", "localhost")
+
+    try:
+        # 1. Eliminar y crear la base de datos nuevamente
+        drop_create_cmd = f'mysql -u {db_user} -p{db_pass} -h {db_host} -e "DROP DATABASE IF EXISTS {db_name}; CREATE DATABASE {db_name};"'
+        subprocess.run(drop_create_cmd, shell=True, check=True)
+
+        # 2. Restaurar el dump
+        restore_cmd = f'mysql -u {db_user} -p{db_pass} -h {db_host} {db_name} < {temp_path}'
+        subprocess.run(restore_cmd, shell=True, check=True)
+
+        return Response({"message": "Database restored successfully"}, status=status.HTTP_200_OK)
+
+    except subprocess.CalledProcessError as e:
+        return Response({"message": f"Restore failed: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    finally:
+        if os.path.exists(temp_path):
+            os.remove(temp_path)
 
 @api_view(["GET"])
 @authentication_classes([CookieJWTAuthentication])
