@@ -1,10 +1,37 @@
-import { useState, ChangeEvent, FormEvent } from "react";
+import { useState, ChangeEvent, FormEvent, useEffect } from "react";
 import { request } from "../../services/api";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+  CartesianGrid,
+} from "recharts";
 
 interface UploadStatusType {
   success: boolean;
   message: string;
 }
+
+interface PointsResponse {
+  investigadores: Points[];
+}
+interface Points {
+  IdInvestigador: Number;
+  Investigador: Number;
+  PuntosEstudiantes: Number;
+  PuntosLineasReconocidas: Number;
+  PuntosProyectos: Number;
+  PuntosArticulos: Number;
+  PuntosEventos: Number;
+  PuntajeTotal: Number;
+}
+
+const fetchPoints = async (): Promise<PointsResponse> => {
+  return request("get", "/investigator-values/");
+};
 
 const Home: React.FC = () => {
   const [file, setFile] = useState<File | null>(null);
@@ -12,6 +39,17 @@ const Home: React.FC = () => {
   const [uploadStatus, setUploadStatus] = useState<UploadStatusType | null>(
     null,
   );
+  const [puntos, setPuntos] = useState<Points[]>([]);
+
+  const getPoints = async () => {
+    const data = await fetchPoints();
+    setPuntos(data.investigadores);
+  };
+
+  // Fetch investigadores on component mount
+  useEffect(() => {
+    getPoints();
+  }, []);
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -127,6 +165,35 @@ const Home: React.FC = () => {
             )}
           </div>
         </form>
+      </div>
+      <div className="h-[500px] w-full rounded-2xl bg-gray-900 p-4 text-white shadow-lg">
+        <h2 className="mb-4 text-2xl font-bold text-orange-400">
+          Puntaje Total de Investigadores
+        </h2>
+        <ResponsiveContainer width="100%" height="100%">
+          <BarChart
+            layout="vertical"
+            data={puntos}
+            margin={{ top: 20, right: 30, left: 70, bottom: 5 }}
+          >
+            <XAxis type="number" stroke="#F97316" />
+            <CartesianGrid strokeDasharray="3 3" stroke="#4B5563" />
+            <YAxis dataKey="Investigador" type="category" stroke="#F97316" />
+            <Tooltip
+              contentStyle={{
+                backgroundColor: "#1F2937",
+                borderColor: "#F97316",
+              }}
+              cursor={{ fill: "#374151" }}
+            />
+            <Bar
+              dataKey="PuntajeTotal"
+              fill="#F97316"
+              barSize={20}
+              radius={[0, 10, 10, 0]}
+            />
+          </BarChart>
+        </ResponsiveContainer>
       </div>
     </div>
   );

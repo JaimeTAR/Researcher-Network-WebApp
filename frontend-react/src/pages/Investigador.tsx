@@ -9,7 +9,7 @@ import {
   BiCalendar,
   BiUser,
 } from "react-icons/bi";
-import { FaFlask, FaGraduationCap } from "react-icons/fa";
+import { FaFlask } from "react-icons/fa";
 import { GiLightBulb } from "react-icons/gi";
 import { request } from "../services/api";
 import {

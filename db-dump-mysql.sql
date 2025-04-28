@@ -60,6 +60,7 @@ CREATE TABLE `articulos` (
   `DOI` varchar(100) DEFAULT NULL,
   `URL` varchar(200) DEFAULT NULL,
   `Estatus` tinyint(1) DEFAULT '1',
+  `Progreso` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`IdArticulo`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -70,7 +71,7 @@ CREATE TABLE `articulos` (
 
 LOCK TABLES `articulos` WRITE;
 /*!40000 ALTER TABLE `articulos` DISABLE KEYS */;
-INSERT INTO `articulos` VALUES (1,'Optimización de Algoritmos en Python','IEEE Big Data','Optimización de algoritmos para Big Data en Python.','USA',2025,'2025-01-15','DOI:10.1109/IEEE1','https://ieeexplore.ieee.org/doc1',1),(2,'Microservicios con Docker y Kubernetes','ACM Comms','Implementación de microservicios con Docker y Kubernetes.','UK',2025,'2025-02-10','DOI:10.1145/678901','https://dl.acm.org/doi/10.1145/678901',1),(3,'Blockchain en Transacciones Digitales','J. Cryptographic Eng.','Uso de blockchain para asegurar transacciones digitales.','Canadá',2025,'2025-03-05','DOI:10.1007/s1234','https://link.springer.com/article/s1234',1),(4,'IA en Reconocimiento de Imágenes','CVIU','Aplicación de IA para reconocimiento de imágenes.','USA',2025,'2025-04-01','DOI:10.1016/jcviu.2025','https://www.journals.elsevier.com/cviu',1),(5,'Apps Móviles Multiplataforma','Mobile Review','Desarrollo de apps móviles para múltiples plataformas.','Alemania',2025,'2025-04-15','DOI:10.1007/s5678','https://link.springer.com/journal/5678',1),(6,'Big Data y Análisis Predictivo','Data Science J.','Análisis predictivo usando técnicas de Big Data.','USA',2025,'2025-05-10','DOI:10.1016/jds.2025','https://www.journals.elsevier.com/ds',1),(7,'Seguridad en la Nube con DevOps','Cloud Sec. J.','Prácticas de seguridad en la nube y DevOps.','Singapur',2025,'2025-06-05','DOI:10.1145/876543','https://dl.acm.org/doi/10.1145/876543',1),(8,'Bases de Datos NoSQL Optimized','ACM Trans. DB','Mejoras en el rendimiento de bases NoSQL.','USA',2025,'2025-06-20','DOI:10.1145/135045','https://dl.acm.org/doi/10.1145/135045',1),(9,'Automatización de Pruebas Web','STVR','Herramientas para automatizar pruebas en web.','Australia',2025,'2025-07-15','DOI:10.1002/stvr.5678','https://onlinelibrary.wiley.com/journal/14753135',1),(10,'IoT y ML en Smart Cities','IEEE IoT J.','Integración de IoT y ML en ciudades inteligentes.','USA',2025,'2025-08-01','DOI:10.1109/JIOT.789012','https://ieeexplore.ieee.org/document/789012',1),(11,'Evolución de Lenguajes de Programación','CACM','Breve repaso a la evolución de los lenguajes.','USA',2025,'2025-08-20','DOI:10.1145/112233','https://cacm.acm.org',1),(12,'Software Ágil y DevOps','IEEE Software','Integración de metodologías ágiles y DevOps.','USA',2025,'2025-09-05','DOI:10.1109/MS123456','https://www.computer.orgcsdl/magazine/so',1),(13,'Ciberseguridad en la Era Digital','InfoSec J.','Estrategias para enfrentar amenazas cibernéticas.','UK',2025,'2025-09-20','DOI:10.1016/j.jinf.001','https://www.journals.elsevier.com/jinf',1),(14,'Realidad Virtual en Educación','Computers & Educ.','Impacto de la realidad virtual en el aula.','USA',2025,'2025-10-05','DOI:10.1016/jcompedu.002','https://www.journals.elsevier.com/compedu',1),(15,'Deep Learning en Reconocimiento de Voz','IEEE TNN','Aplicación de deep learning en sistemas de voz.','USA',2025,'202510-20','DOI:10.1109/TNN654321','https://ieeexplore.ieee.org/document/654321',1);
+INSERT INTO `articulos` VALUES (1,'Optimización de Algoritmos en Python','IEEE Big Data','Optimización de algoritmos para Big Data en Python.','USA',2025,'2025-01-15','DOI:10.1109/IEEE1','https://ieeexplore.ieee.org/doc1',1,'en proceso'),(2,'Microservicios con Docker y Kubernetes','ACM Comms','Implementación de microservicios con Docker y Kubernetes.','UK',2025,'2025-02-10','DOI:10.1145/678901','https://dl.acm.org/doi/10.1145/678901',1,'terminado'),(3,'Blockchain en Transacciones Digitales','J. Cryptographic Eng.','Uso de blockchain para asegurar transacciones digitales.','Canadá',2025,'2025-03-05','DOI:10.1007/s1234','https://link.springer.com/article/s1234',1,'en proceso'),(4,'IA en Reconocimiento de Imágenes','CVIU','Aplicación de IA para reconocimiento de imágenes.','USA',2025,'2025-04-01','DOI:10.1016/jcviu.2025','https://www.journals.elsevier.com/cviu',1,'terminado'),(5,'Apps Móviles Multiplataforma','Mobile Review','Desarrollo de apps móviles para múltiples plataformas.','Alemania',2025,'2025-04-15','DOI:10.1007/s5678','https://link.springer.com/journal/5678',1,'en proceso'),(6,'Big Data y Análisis Predictivo','Data Science J.','Análisis predictivo usando técnicas de Big Data.','USA',2025,'2025-05-10','DOI:10.1016/jds.2025','https://www.journals.elsevier.com/ds',1,'aceptado'),(7,'Seguridad en la Nube con DevOps','Cloud Sec. J.','Prácticas de seguridad en la nube y DevOps.','Singapur',2025,'2025-06-05','DOI:10.1145/876543','https://dl.acm.org/doi/10.1145/876543',1,'publicado'),(8,'Bases de Datos NoSQL Optimized','ACM Trans. DB','Mejoras en el rendimiento de bases NoSQL.','USA',2025,'2025-06-20','DOI:10.1145/135045','https://dl.acm.org/doi/10.1145/135045',1,'en proceso'),(9,'Automatización de Pruebas Web','STVR','Herramientas para automatizar pruebas en web.','Australia',2025,'2025-07-15','DOI:10.1002/stvr.5678','https://onlinelibrary.wiley.com/journal/14753135',1,'terminado'),(10,'IoT y ML en Smart Cities','IEEE IoT J.','Integración de IoT y ML en ciudades inteligentes.','USA',2025,'2025-08-01','DOI:10.1109/JIOT.789012','https://ieeexplore.ieee.org/document/789012',1,'en proceso'),(11,'Evolución de Lenguajes de Programación','CACM','Breve repaso a la evolución de los lenguajes.','USA',2025,'2025-08-20','DOI:10.1145/112233','https://cacm.acm.org',1,'publicado'),(12,'Software Ágil y DevOps','IEEE Software','Integración de metodologías ágiles y DevOps.','USA',2025,'2025-09-05','DOI:10.1109/MS123456','https://www.computer.orgcsdl/magazine/so',1,'en proceso'),(13,'Ciberseguridad en la Era Digital','InfoSec J.','Estrategias para enfrentar amenazas cibernéticas.','UK',2025,'2025-09-20','DOI:10.1016/j.jinf.001','https://www.journals.elsevier.com/jinf',1,'terminado'),(14,'Realidad Virtual en Educación','Computers & Educ.','Impacto de la realidad virtual en el aula.','USA',2025,'2025-10-05','DOI:10.1016/jcompedu.002','https://www.journals.elsevier.com/compedu',1,'aceptado'),(15,'Deep Learning en Reconocimiento de Voz','IEEE TNN','Aplicación de deep learning en sistemas de voz.','USA',2025,'202510-20','DOI:10.1109/TNN654321','https://ieeexplore.ieee.org/document/654321',1,'en proceso');
 /*!40000 ALTER TABLE `articulos` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -559,6 +560,7 @@ CREATE TABLE `estudiantes` (
   `FechaInicio` varchar(100) DEFAULT NULL,
   `FechaTermino` varchar(100) DEFAULT NULL,
   `SueldoEstudiante` decimal(12,2) DEFAULT '0.00',
+  `Progreso` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`IdEstudiante`) USING BTREE,
   KEY `fk_estudiantes_tipoestudiante` (`IdTipoEstudiante`),
   KEY `fk_estudiantes_carreras` (`IdCarreras`),
@@ -575,7 +577,7 @@ CREATE TABLE `estudiantes` (
 
 LOCK TABLES `estudiantes` WRITE;
 /*!40000 ALTER TABLE `estudiantes` DISABLE KEYS */;
-INSERT INTO `estudiantes` VALUES (1,1,1,1,'Carlos','2025-02-24','2025-08-24',2300.00),(2,2,2,2,'Roberto','2025-02-24','2025-08-24',6200.00),(3,3,3,3,'Diego','2025-02-24','2025-08-24',2400.00),(4,4,4,4,'Carmen','2025-02-24','2025-08-24',7400.00),(5,2,5,5,'Gerardo','2025-02-24','2025-08-24',2100.00),(6,3,6,6,'Alberto','2025-02-24','2025-08-24',8100.00),(7,1,1,7,'Alicia','2025-02-24','2025-08-24',2100.00),(8,1,2,8,'Sandra','2025-02-24','2025-08-24',8000.00),(9,4,3,9,'Javier','2025-02-24','2025-08-24',2300.00),(10,1,4,10,'Rebeca','2025-02-24','2025-08-24',2300.00);
+INSERT INTO `estudiantes` VALUES (1,1,1,1,'Carlos','2025-02-24','2025-08-24',2300.00,'deserto'),(2,2,2,2,'Roberto','2025-02-24','2025-08-24',6200.00,NULL),(3,3,3,3,'Diego','2025-02-24','2025-08-24',2400.00,'egresado'),(4,4,4,4,'Carmen','2025-02-24','2025-08-24',7400.00,'deserto'),(5,2,5,5,'Gerardo','2025-02-24','2025-08-24',2100.00,'titulado'),(6,3,6,6,'Alberto','2025-02-24','2025-08-24',8100.00,'titulado'),(7,1,1,7,'Alicia','2025-02-24','2025-08-24',2100.00,'egresado'),(8,1,2,8,'Sandra','2025-02-24','2025-08-24',8000.00,NULL),(9,4,3,9,'Javier','2025-02-24','2025-08-24',2300.00,'titulado'),(10,1,4,10,'Rebeca','2025-02-24','2025-08-24',2300.00,'deserto');
 /*!40000 ALTER TABLE `estudiantes` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -716,6 +718,7 @@ DROP TABLE IF EXISTS `lineas`;
 CREATE TABLE `lineas` (
   `IdLinea` int NOT NULL AUTO_INCREMENT,
   `Nombre` varchar(100) DEFAULT NULL,
+  `reconocido` tinyint(1) NOT NULL,
   PRIMARY KEY (`IdLinea`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -726,7 +729,7 @@ CREATE TABLE `lineas` (
 
 LOCK TABLES `lineas` WRITE;
 /*!40000 ALTER TABLE `lineas` DISABLE KEYS */;
-INSERT INTO `lineas` VALUES (1,'IA'),(2,'Energía'),(3,'Microrredes'),(4,'Medio Ambiente'),(5,'Desarrollo humano'),(6,'Desarrollo de Software'),(7,'Química de combustibles');
+INSERT INTO `lineas` VALUES (1,'IA',1),(2,'Energía',0),(3,'Microrredes',1),(4,'Medio Ambiente',0),(5,'Desarrollo humano',0),(6,'Desarrollo de Software',1),(7,'Química de combustibles',0);
 /*!40000 ALTER TABLE `lineas` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -973,4 +976,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-04-24 13:37:20
+-- Dump completed on 2025-04-27 22:20:02

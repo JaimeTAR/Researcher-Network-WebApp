@@ -16,6 +16,10 @@ from .serializers import (
     TipoHerramientasSerializer, UnidadesSerializer
 )
 
+
+
+from django.db import connection
+from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework import status, viewsets, filters
@@ -280,3 +284,210 @@ class UnidadesViewSet(viewsets.ModelViewSet):
     serializer_class = UnidadesSerializer
     filter_backends = [filters.SearchFilter]
     search_fields = ['nombre']
+
+
+
+
+class InvestigatorValueView(APIView):
+    """
+    API endpoint that returns the calculated value of each investigator
+    based on the specified criteria.
+    """
+    
+    def get(self, request):
+        try:
+            with connection.cursor() as cursor:
+                # SQL query to calculate investigator values
+                cursor.execute("""
+                    SELECT 
+    inv.IdInvestigador,
+    inv.Nombre AS Investigador,
+    
+    -- Students (Estudiantes) points
+    COALESCE(
+        (SELECT SUM(
+            CASE 
+                WHEN e.IdTipoEstudiante = 3 THEN -- Maestría
+                    CASE 
+                        WHEN e.Progreso = 'deserto' THEN 1
+                        WHEN e.Progreso = 'egresado' THEN 3
+                        WHEN e.Progreso = 'titulado' THEN 5
+                        ELSE 0
+                    END
+                WHEN e.IdTipoEstudiante = 4 THEN -- Doctorado
+                    CASE 
+                        WHEN e.Progreso = 'deserto' THEN 3
+                        WHEN e.Progreso = 'egresado' THEN 5
+                        WHEN e.Progreso = 'titulado' THEN 8
+                        ELSE 0
+                    END
+                ELSE 0
+            END
+        ) FROM estudiantes e WHERE e.IdInvestigador = inv.IdInvestigador),
+        0
+    ) AS PuntosEstudiantes,
+    
+    -- Research lines (Líneas) with institutional recognition
+    COALESCE(
+        (SELECT 5 * COUNT(*) 
+         FROM detlineas dl
+         JOIN lineas l ON dl.IdLinea = l.IdLinea
+         WHERE dl.IdInvestigador = inv.IdInvestigador AND l.reconocido = 1),
+        0
+    ) AS PuntosLineasReconocidas,
+    
+    -- Projects (Proyectos) points
+    COALESCE(
+        (SELECT SUM(
+            CASE 
+                WHEN p.Estado = 'En proceso' THEN 3
+                WHEN p.Estado = 'Terminado' THEN 7
+                WHEN p.Estado = 'Instalado' THEN 10
+                ELSE 0
+            END
+         ) FROM detproyectos dp
+         JOIN proyectos p ON dp.IdProyecto = p.IdProyecto
+         WHERE dp.IdInvestigador = inv.IdInvestigador),
+        0
+    ) AS PuntosProyectos,
+    
+    -- Articles (Artículos) points
+    COALESCE(
+        (SELECT SUM(
+            CASE 
+                WHEN da.OrdenAutor = 1 THEN
+                    CASE 
+                        WHEN a.Progreso = 'en proceso' THEN 3
+                        WHEN a.Progreso = 'terminado' THEN 5
+                        WHEN a.Progreso = 'aceptado' THEN 7
+                        WHEN a.Progreso = 'publicado' THEN 10
+                        ELSE 0
+                    END
+                ELSE 3
+            END
+         ) FROM detarticulos da
+         JOIN articulos a ON da.IdArticulo = a.IdArticulo
+         WHERE da.IdInvestigador = inv.IdInvestigador),
+        0
+    ) AS PuntosArticulos,
+    
+    -- Events (Eventos) points
+    COALESCE(
+        (SELECT SUM(
+            CASE 
+                WHEN de.IdRolEvento = 1 THEN -- As presenter (ponente)
+                    CASE 
+                        WHEN e.IdTipoEvento = 1 THEN 3 -- Congresos
+                        WHEN e.IdTipoEvento = 2 THEN 1 -- Talleres
+                        WHEN e.IdTipoEvento = 3 THEN 5 -- Conferencias
+                        WHEN e.IdTipoEvento = 4 THEN 3 -- Diplomados
+                        WHEN e.IdTipoEvento = 5 THEN 1 -- Charlas
+                        ELSE 0
+                    END
+                ELSE 0
+            END
+         ) FROM deteventos de
+         JOIN eventos e ON de.IdEvento = e.IdEvento
+         WHERE de.IdInvestigador = inv.IdInvestigador),
+        0
+    ) AS PuntosEventos,
+    
+    -- Total points (sum of all categories)
+    COALESCE(
+        (SELECT SUM(
+            CASE 
+                WHEN e.IdTipoEstudiante = 3 THEN 
+                    CASE 
+                        WHEN e.Progreso = 'deserto' THEN 1
+                        WHEN e.Progreso = 'egresado' THEN 3
+                        WHEN e.Progreso = 'titulado' THEN 5
+                        ELSE 0
+                    END
+                WHEN e.IdTipoEstudiante = 4 THEN 
+                    CASE 
+                        WHEN e.Progreso = 'deserto' THEN 3
+                        WHEN e.Progreso = 'egresado' THEN 5
+                        WHEN e.Progreso = 'titulado' THEN 8
+                        ELSE 0
+                    END
+                ELSE 0
+            END
+        ) FROM estudiantes e WHERE e.IdInvestigador = inv.IdInvestigador),
+        0
+    ) +
+    COALESCE(
+        (SELECT 5 * COUNT(*) 
+         FROM detlineas dl
+         JOIN lineas l ON dl.IdLinea = l.IdLinea
+         WHERE dl.IdInvestigador = inv.IdInvestigador AND l.reconocido = 1),
+        0
+    ) +
+    COALESCE(
+        (SELECT SUM(
+            CASE 
+                WHEN p.Estado = 'En proceso' THEN 3
+                WHEN p.Estado = 'Terminado' THEN 7
+                WHEN p.Estado = 'Instalado' THEN 10
+                ELSE 0
+            END
+         ) FROM detproyectos dp
+         JOIN proyectos p ON dp.IdProyecto = p.IdProyecto
+         WHERE dp.IdInvestigador = inv.IdInvestigador),
+        0
+    ) +
+    COALESCE(
+        (SELECT SUM(
+            CASE 
+                WHEN da.OrdenAutor = 1 THEN
+                    CASE 
+                        WHEN a.Progreso = 'en proceso' THEN 3
+                        WHEN a.Progreso = 'terminado' THEN 5
+                        WHEN a.Progreso = 'aceptado' THEN 7
+                        WHEN a.Progreso = 'publicado' THEN 10
+                        ELSE 0
+                    END
+                ELSE 3
+            END
+         ) FROM detarticulos da
+         JOIN articulos a ON da.IdArticulo = a.IdArticulo
+         WHERE da.IdInvestigador = inv.IdInvestigador),
+        0
+    ) +
+    COALESCE(
+        (SELECT SUM(
+            CASE 
+                WHEN de.IdRolEvento = 1 THEN
+                    CASE 
+                        WHEN e.IdTipoEvento = 1 THEN 3
+                        WHEN e.IdTipoEvento = 2 THEN 1
+                        WHEN e.IdTipoEvento = 3 THEN 5
+                        WHEN e.IdTipoEvento = 4 THEN 3
+                        WHEN e.IdTipoEvento = 5 THEN 1
+                        ELSE 0
+                    END
+                ELSE 0
+            END
+         ) FROM deteventos de
+         JOIN eventos e ON de.IdEvento = e.IdEvento
+         WHERE de.IdInvestigador = inv.IdInvestigador),
+        0
+    ) AS PuntajeTotal
+FROM 
+    investigadores inv
+ORDER BY 
+    PuntajeTotal DESC;
+                """)
+                
+                # Convert the query results to a list of dictionaries
+                columns = [col[0] for col in cursor.description]
+                result = [dict(zip(columns, row)) for row in cursor.fetchall()]
+            
+                return Response({
+                    "investigadores": result,
+                })
+                
+        except Exception as e:
+            return Response(
+                {"error": str(e)},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
