@@ -376,3 +376,65 @@ _No body returned_
 ### Caso de uso
 
 Eliminar un usuario, borrar un archivo o quitar un recurso del sistema.
+
+## Criterios de Puntuación por Investigador
+
+Cada investigador tiene asociados los siguientes componentes con su valor correspondiente:
+
+### Estudiantes
+
+- **Maestría**:
+  - Activo: **1 punto**
+  - Registrado pero desertó: **2 puntos**
+  - Egresado: **3 puntos**
+  - Titulado: **5 puntos**
+
+- **Doctorado**:
+  - Activo: **1 punto**
+  - Registrado pero desertó: **3 puntos**
+  - Egresado: **5 puntos**
+  - Titulado: **8 puntos**
+
+### Líneas de Investigación
+
+- Línea de investigación con **reconocimiento institucional**: **5 puntos**  
+  *Nota: Un investigador puede tener varias líneas, pero solo se consideran aquellas con reconocimiento institucional.*
+
+### Proyectos
+
+- En proceso: **3 puntos**
+- Terminado: **7 puntos**
+- Instalado en sitio: **10 puntos**
+
+### Artículos
+
+- En proceso: **3 puntos**
+- Terminado: **5 puntos**
+- Aceptado en una revista: **7 puntos**
+- Publicado: **10 puntos**  
+  *Nota: Solo aplica puntaje completo si el investigador es el primer autor; en otros casos solo se otorgan 3 puntos.*
+
+### Materias
+
+- Clase asignada: **5 puntos**
+
+### Eventos
+
+- Congreso como ponente: **3 puntos**
+- Taller: **1 punto**
+- Conferencia como ponente: **5 puntos**
+- Diplomado: **3 puntos**
+- Charla: **1 punto**
+
+
+En nuestro Dashboard, dentro de "Home", podrás encontrar la gráfica principal donde se muestran todos los investigadores actuales y su puntuación.
+Donde podrás filtrar por "Area".
+
+![image](https://github.com/user-attachments/assets/acf51cae-c67c-402e-8208-5350a2915c7b)
+
+Sí presionas sobre una barra de algún investigador, se mostrará otra gráfica, la cual tendrá el desglose de los puntos obtenidos por ese investigador.
+
+![image](https://github.com/user-attachments/assets/f1bae9e9-8002-437b-baff-21a74424f3cf)
+
+
+
