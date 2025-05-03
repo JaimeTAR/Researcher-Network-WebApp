@@ -1,40 +1,36 @@
 version: "3.9"
 
 services:
-  backend:
-    build:
-      context: ./backend-django
-      dockerfile: Dockerfile
-    volumes:
-      - ./backend-django/ev2project:/app
-    ports:
-      - "8000:8000"
-    depends_on:
-      - db
-
   frontend:
     build:
-      context: ./frontend-react # Aquí apuntas a la carpeta correcta frontend-react
+      context: ./frontend-react
       dockerfile: Dockerfile
+    image: frontend-react:latest # Nombre de la imagen del frontend
+    networks:
+      - researcher-network-webapp_default
     volumes:
       - ./frontend-react:/app
     ports:
       - "3000:3000"
     stdin_open: true
     tty: true
+    env_file:
+      - ./frontend-react/.env
 
-  db:
-    image: mysql:8.0
-    restart: always
-    environment:
-      MYSQL_DATABASE: mydb
-      MYSQL_USER: user
-      MYSQL_PASSWORD: pass
-      MYSQL_ROOT_PASSWORD: rootpass
-    ports:
-      - "3306:3306"
+  backend:
+    build:
+      context: ./backend-django
+      dockerfile: Dockerfile
+    image: researcher-network-webapp-backend:latest # Nombre de la imagen del backend
+    networks:
+      - researcher-network-webapp_default
     volumes:
-      - mysql_data:/var/lib/mysql
+      - ./backend-django/ev2project:/app
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./backend-django/ev2project/ev2/.env
 
-volumes:
-  mysql_data:
+networks:
+  researcher-network-webapp_default:
+    external: true # Usando la red externa que mencionaste

@@ -13,6 +13,9 @@ RUN pip install --no-cache-dir -r /app/requirements.txt
 # Copia todo el contenido de 'ev2project' al contenedor
 COPY ev2project /app
 
+# Copia el archivo .env desde 'ev2project/ev2' al contenedor
+COPY ev2project/ev2/.env /app/ev2/.env
+
 # Expón el puerto en el que corre la app
 EXPOSE 8000
 

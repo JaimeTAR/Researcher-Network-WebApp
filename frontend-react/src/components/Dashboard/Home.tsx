@@ -302,10 +302,7 @@ const Home: React.FC = () => {
                     borderColor: "#F97316",
                   }}
                   cursor={{ fill: "#374151" }}
-                  formatter={(value, name) => [
-                    `${value} puntos`,
-                    "Puntaje Total",
-                  ]}
+                  formatter={(value) => [`${value} puntos`, "Puntaje Total"]}
                   labelFormatter={(label) => {
                     const investigador = filteredData.find(
                       (inv) => inv.Investigador === label,
