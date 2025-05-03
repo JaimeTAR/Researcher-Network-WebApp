@@ -1,18 +1,15 @@
-FROM python:3.9-slim
+# backend/Dockerfile
+FROM python:alpine
 
-# Set environment variables
-ENV PYTHONDONTWRITEBYTECODE=1
-ENV PYTHONUNBUFFERED=1
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
 
-# Set work directory
-WORKDIR /code
+WORKDIR /app
 
-# Install MySQL client and development libraries
-RUN apt-get update && apt-get install -y default-libmysqlclient-dev build-essential
-
-# Install dependencies
+RUN pip install gunicorn
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy project
 COPY . .
+
+CMD ["gunicorn", "ev2.wsgi:application", "--bind", "0.0.0.0:8000"]

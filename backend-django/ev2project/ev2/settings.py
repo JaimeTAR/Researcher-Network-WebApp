@@ -22,14 +22,11 @@ SECRET_KEY = os.environ.get("DJANGO_SECRET")
 
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 CORS_ALLOW_CREDENTIALS = True
 
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",
-    "http://127.0.0.1:5173",
-]
+CORS_ALLOW_ALL_ORIGINS = True
 
 CORS_ALLOW_HEADERS = [
     'content-type',
@@ -109,7 +106,7 @@ DATABASES = {
         'USER': os.environ.get("DB_USER"),
         'PASSWORD': os.environ.get("DB_PASSWORD"),
         'HOST': os.environ.get("DB_HOST"), 
-        'PORT': os.environ.get("DB_PORT"), 
+        'PORT': os.environ.get("DB_PORT", "3306"), 
     }
 }
 
