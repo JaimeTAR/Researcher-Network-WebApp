@@ -1,11 +1,16 @@
-# frontend/Dockerfile
-FROM node:22-alpine AS build
-WORKDIR /app
-COPY package.json ./
-COPY package-lock.json ./
-RUN npm install
-COPY . .
-RUN npm run build
+FROM node:20-slim
 
-FROM nginx:stable-alpine
-COPY --from=build /app/dist /usr/share/nginx/html
+WORKDIR /app
+
+# Copy package files and install dependencies
+COPY package*.json ./
+RUN npm ci
+
+# Copy the rest of the app
+COPY . .
+
+# Expose port
+EXPOSE 3000
+
+# Start the app
+CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
