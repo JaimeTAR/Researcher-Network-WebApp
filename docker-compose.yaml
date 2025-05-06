@@ -27,7 +27,7 @@ services:
       - ./frontend-react:/app
       - /app/node_modules
     environment:
-      - VITE_API_URL=http://backend:8000/api
+      - VITE_API_URL=${VITE_API_URL}
       - NODE_ENV=production
     depends_on:
       - backend

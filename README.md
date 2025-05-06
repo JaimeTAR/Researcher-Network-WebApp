@@ -14,8 +14,6 @@
 
 Swagger is used for documentation of the api, when navigating to `/swagger` on the backend, the documentation will be available.
 
-
-
 ## Technologies Used
 
 ### Frontend
@@ -70,6 +68,7 @@ Swagger is used for documentation of the api, when navigating to `/swagger` on t
    DB_PASSWORD=your_db_password
    DB_HOST=your_db_host
    DB_PORT=your_db_port
+   VITE_API_URL="api_url"
    ```
 
 3. **Build and Run the Docker Containers**
