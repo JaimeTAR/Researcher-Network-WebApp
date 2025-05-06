@@ -12,5 +12,5 @@ COPY . .
 # Expose port
 EXPOSE 8000
 
-# Run server
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+# Run server with gunicorn for production
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "ev2.wsgi:application"]

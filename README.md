@@ -14,49 +14,7 @@
 
 Swagger is used for documentation of the api, when navigating to `/swagger` on the backend, the documentation will be available.
 
-## Nginx implementation
 
-Used Nginx to serve as a reverse proxy and balance loader, having 3 different instances of the server, being managed by our central Nginx server.
-
-The files for the dockerization of the backend are located inside the `backend-django/ev2project` folder.
-
-File `Dockerfile` is used to build the image for the backend.
-
-File `docker-compose.yml` is used to build the three different instances of the server.
-
-Then we need an Nginx server with the following configuration:
-
-```yml
-# nginx.conf
-
-worker_processes 1;
-
-events {
-worker_connections 1024;
-}
-
-http {
-include mime.types;
-
-upstream django_cluster {
-least_conn;
-server 127.0.0.1:8001;
-server 127.0.0.1:8002;
-server 127.0.0.1:8003;
-}
-
-server {
-listen 8080;
-server_name localhost;
-
-location / {
-proxy_pass http://django_cluster;
-proxy_set_header Host $host;
-proxy_set_header X-Real-IP $remote_addr;
-}
-}
-}
-```
 
 ## Technologies Used
 
@@ -90,87 +48,46 @@ proxy_set_header X-Real-IP $remote_addr;
 - Dotenv - 0.9.9
 - Simple JWT - 5.5.0
 
-# Installation Process
+## Installation and Running with Docker
 
-## Database Setup
+### Prerequisites
+- Docker and Docker Compose installed on your machine.
 
-1. Import the dump file into a MySQL database:
+### Steps to Run the Application
+
+1. **Clone the Repository**
    ```bash
-   # Example using mysql command line (adjust as needed)
-   mysql -u username -p database_name < dump_file.sql
+   git clone <repository-url>
+   cd Researcher-Network-WebApp
    ```
 
-## Backend Setup (Django)
+2. **Create a `.env` File**
+   Create a `.env` file in the root directory with the following variables:
+   ```
+   DJANGO_SECRET=your_django_secret
+   DB_NAME=your_db_name
+   DB_USER=your_db_user
+   DB_PASSWORD=your_db_password
+   DB_HOST=your_db_host
+   DB_PORT=your_db_port
+   ```
 
-Navigate to the `backend-django` directory and follow these steps:
-
-1. Create a Python virtual environment (optional but recommended):
-
+3. **Build and Run the Docker Containers**
    ```bash
-   python -m venv venv
+   docker-compose up --build
    ```
 
-2. Activate the virtual environment:
+4. **Access the Application**
+   - Frontend: [http://localhost:80](http://localhost:80)
+   - Backend API: [http://localhost:8000/api](http://localhost:8000/api)
+   - Swagger Documentation: [http://localhost:8000/swagger](http://localhost:8000/swagger)
+   - ReDoc Documentation: [http://localhost:8000/redoc](http://localhost:8000/redoc)
 
-   - Windows: `venv\Scripts\activate`
-   - Unix/MacOS: `source venv/bin/activate`
 
-3. Install dependencies:
-
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-4. Create a `.env` file in the project directory following the `.env.example` template:
-
-   ```
-   DJANGO_SECRET="ajhskjfhalksjh1u2l34#$%%$#F45gj45f34F#$F@!"
-   DB_NAME="investigadores"
-   DB_USER="root"
-   DB_PASSWORD="root"
-   DB_HOST="localhost"
-   DB_PORT=3306
-   ```
-
-   _Note: Replace the credentials with your own_
-
-5. Run migrations:
-
-   ```bash
-   python ./manage.py makemigrations api
-   python ./manage.py makemigrations
-   python ./manage.py migrate
-   ```
-
-6. Start the backend server:
-   ```bash
-   python ./manage.py runserver
-   ```
-   The server will run at http://localhost:8000 by default.
-
-## Frontend Setup (React)
-
-Navigate to the `frontend-react` directory and follow these steps:
-
-1. Create a `.env` file following the `.env.example` template:
-
-   ```
-   VITE_API_URL="http://localhost:8000/api"
-   ```
-
-2. Install npm packages:
-
-   ```bash
-   npm install
-   ```
-
-3. Start the development server:
-
-   ```bash
-   npm run dev
-   ```
-
-4. Open the application in your browser using the link displayed in the terminal.
+### Additional Information
+- The backend is served using Gunicorn and the frontend is served using Nginx.
+- All API endpoints are under `/api/`.
+- A health check endpoint is available at `/health/`.
 
 ## Default Login Credentials
 

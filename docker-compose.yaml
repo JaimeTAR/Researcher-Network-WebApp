@@ -7,17 +7,13 @@ services:
     volumes:
       - ./backend-django:/app
     environment:
-      - DEBUG=True
-      - ALLOWED_HOSTS=localhost,127.0.0.1,backend
       - DJANGO_SECRET=${DJANGO_SECRET}
       - DB_NAME=${DB_NAME}
       - DB_USER=${DB_USER}
       - DB_PASSWORD=${DB_PASSWORD}
       - DB_HOST=${DB_HOST}
       - DB_PORT=${DB_PORT}
-
-    command: >
-      sh -c "python manage.py runserver 0.0.0.0:8000"
+    command: gunicorn --bind 0.0.0.0:8000 ev2.wsgi:application
     restart: unless-stopped
     networks:
       - ev2-network
@@ -26,13 +22,13 @@ services:
     build: ./frontend-react
     container_name: ev2-frontend
     ports:
-      - "3000:3000"
+      - "80:80"
     volumes:
       - ./frontend-react:/app
       - /app/node_modules
     environment:
       - VITE_API_URL=http://backend:8000/api
-      - NODE_ENV=development
+      - NODE_ENV=production
     depends_on:
       - backend
     restart: unless-stopped
