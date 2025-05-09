@@ -79,7 +79,8 @@ const InvestigadoresView = () => {
           inv.correo?.toLowerCase().includes(searchQuery.toLowerCase()) ||
           inv.idarea_detail?.nombre
             ?.toLowerCase()
-            .includes(searchQuery.toLowerCase()),
+             .includes(searchQuery.toLowerCase()) ||
+          inv.celular?.toLowerCase().includes(searchQuery.toLowerCase()),
       );
       setFilteredInvestigadores(filtered);
     } else {
@@ -381,16 +382,20 @@ const InvestigadoresView = () => {
                     </div>
                     <div className="flex space-x-2">
                       <button
-                        onClick={() => handleEdit(investigador)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleEdit(investigador);
+                        }}
                         className="rounded-full p-1 hover:bg-gray-700"
                         aria-label="Editar"
                       >
                         <BiEdit className="h-5 w-5 text-gray-300 hover:text-orange-500" />
                       </button>
                       <button
-                        onClick={() =>
-                          handleRemove(investigador.idinvestigador)
-                        }
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleRemove(investigador.idinvestigador);
+                        }}
                         className="rounded-full p-1 hover:bg-gray-700"
                         aria-label="Eliminar"
                       >

@@ -245,7 +245,7 @@ const Investigador = () => {
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
-                    className={`flex items-center gap-2 px-4 py-3 font-medium transition-colors ${
+                    className={`flex items-center gap-2 px-4 py-3 font-medium transition-colors cursor-pointer ${
                       activeTab === tab.id
                         ? "border-b-2 border-orange-500 text-orange-500"
                         : "text-gray-400 hover:text-orange-300"
